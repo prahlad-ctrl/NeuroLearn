@@ -131,3 +131,25 @@ class ProgressResponse(BaseModel):
     recommendations: list[str]
     topic_accuracy: dict
     type_accuracy: dict
+
+
+# --- Authentication ---
+class UserCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+class User(BaseModel):
+    id: str
+    username: str
+    email: str
+    is_active: bool = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    userId: str

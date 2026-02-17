@@ -19,8 +19,15 @@ from schemas import (
     FlashcardResponse,
     PodcastRequest,
     PodcastResponse,
+    UserCreate,
+    UserLogin,
+    User,
+    Token,
 )
-from database import create_session, get_session, update_session
+from database import create_session, get_session, update_session, get_users_collection
+from auth import create_access_token, get_password_hash, verify_password, get_current_user
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import Depends
 from adaptive_engine import (
     calculate_level,
     adjust_level,
@@ -48,15 +55,63 @@ from flashcard_engine import generate_flashcard_prompt, generate_flashcard_from_
 
 router = APIRouter()
 
+# --- Authentication ---
+@router.post("/auth/register", response_model=User)
+async def register(user: UserCreate):
+    users_collection = get_users_collection()
+    existing_user = await users_collection.find_one({"email": user.email})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    hashed_password = get_password_hash(user.password)
+    new_user = {
+        "user_id": str(uuid.uuid4()),
+        "username": user.username,
+        "email": user.email,
+        "hashed_password": hashed_password,
+        "is_active": True,
+        "created_at": str(uuid.uuid4()) # Placeholder for timestamp
+    }
+    
+    await users_collection.insert_one(new_user)
+    
+    return User(
+        id=new_user["user_id"],
+        username=new_user["username"],
+        email=new_user["email"],
+        is_active=new_user["is_active"]
+    )
+
+@router.post("/auth/login", response_model=Token)
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    users_collection = get_users_collection()
+    user = await users_collection.find_one({"email": form_data.username}) # OAuth2 form uses 'username' field for email usually
+    
+    if not user:
+        # Fallback: check if username matches
+        user = await users_collection.find_one({"username": form_data.username})
+    
+    if not user or not verify_password(form_data.password, user["hashed_password"]):
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token = create_access_token(data={"sub": user["username"], "id": user["user_id"]})
+    return {"access_token": access_token, "token_type": "bearer", "userId": user["user_id"]}
+
+# --- Existing routes ---
+
 
 # ---------------------------------------------------------------------------
 # Session
 # ---------------------------------------------------------------------------
 
 @router.post("/start-session", response_model=StartSessionResponse)
-async def start_session(req: StartSessionRequest):
+async def start_session(req: StartSessionRequest, current_user: dict = Depends(get_current_user)):
     session_id = uuid.uuid4().hex[:12]
-    await create_session(session_id, req.subject)
+    await create_session(session_id, req.subject, user_id=current_user["user_id"])
     return StartSessionResponse(session_id=session_id, subject=req.subject, level="unknown")
 
 

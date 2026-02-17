@@ -36,10 +36,16 @@ async def close_db():
 def get_collection():
     return db["sessions"]
 
+def get_users_collection():
+    return db["users"]
 
-async def create_session(session_id: str, subject: str) -> dict:
+def get_database():
+    return db
+
+async def create_session(session_id: str, subject: str, user_id: str = None) -> dict:
     doc = {
         "session_id": session_id,
+        "user_id": user_id,
         "subject": subject,
         "level": "unknown",
         "total_correct": 0,
