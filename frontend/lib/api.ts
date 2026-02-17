@@ -96,6 +96,25 @@ export interface MaterialExerciseResponse {
   source: string;
 }
 
+export interface PodcastScriptEntry {
+  speaker: string;
+  name: string;
+  text: string;
+  emotion: string;
+  audio_url: string | null;
+}
+
+export interface PodcastResponse {
+  podcast_id: string;
+  topic: string;
+  script: PodcastScriptEntry[];
+  full_audio_url: string | null;
+  has_audio: boolean;
+  segments: number;
+}
+
+export const AUDIO_BASE = "http://localhost:8000";
+
 // ---------------------------------------------------------------------------
 // Session
 // ---------------------------------------------------------------------------
@@ -199,5 +218,14 @@ export async function generateFlashcards(
 
 export async function getProgress(session_id: string): Promise<ProgressResponse> {
   const res = await api.post("/progress", { session_id });
+  return res.data;
+}
+
+// ---------------------------------------------------------------------------
+// Podcast
+// ---------------------------------------------------------------------------
+
+export async function generatePodcast(topic: string): Promise<PodcastResponse> {
+  const res = await api.post("/generate-podcast", { topic }, { timeout: 600_000 });
   return res.data;
 }

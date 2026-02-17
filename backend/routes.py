@@ -17,6 +17,8 @@ from schemas import (
     MaterialExerciseResponse,
     FlashcardRequest,
     FlashcardResponse,
+    PodcastRequest,
+    PodcastResponse,
 )
 from database import create_session, get_session, update_session
 from adaptive_engine import (
@@ -313,6 +315,40 @@ async def progress(req: GenerateRequest):
         recommendations=recs,
         topic_accuracy=perf.get("topic_accuracy", {}),
         type_accuracy=perf.get("type_accuracy", {}),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Podcast
+# ---------------------------------------------------------------------------
+
+@router.post("/generate-podcast", response_model=PodcastResponse)
+async def generate_podcast_route(req: PodcastRequest):
+    from podcast_engine import create_podcast
+    result = await create_podcast(req.topic)
+    return PodcastResponse(**result)
+
+
+@router.get("/podcast-audio/{filename}")
+async def serve_podcast_audio(filename: str):
+    """Serve generated podcast audio files (mp3)."""
+    import re as _re
+    from fastapi.responses import FileResponse
+    from podcast_engine import PODCAST_DIR
+
+    # Sanitise filename
+    if not _re.match(r"^[a-z0-9_]+\.(mp3|wav)$", filename):
+        raise HTTPException(status_code=400, detail="Invalid filename")
+
+    path = PODCAST_DIR / filename
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Audio file not found")
+
+    media = "audio/mpeg" if filename.endswith(".mp3") else "audio/wav"
+    return FileResponse(
+        path,
+        media_type=media,
+        headers={"Accept-Ranges": "bytes", "Cache-Control": "public, max-age=3600"},
     )
 
 

@@ -16,6 +16,7 @@ env/
 # Environment variables
 .env
 backend/.env
+backend/podcast_audio
 
 # Node / Next.js
 node_modules/

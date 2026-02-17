@@ -9,8 +9,9 @@ import ExercisePage from "./exercise";
 import DashboardPage from "./dashboard";
 import Flashcards from "./flashcards";
 import MaterialUpload from "./material-upload";
+import PodcastPage from "./podcast";
 
-export type Step = "select" | "quiz" | "lesson" | "exercise" | "dashboard" | "flashcards" | "upload";
+export type Step = "select" | "quiz" | "lesson" | "exercise" | "dashboard" | "flashcards" | "upload" | "podcast";
 
 export interface AppState {
   sessionId: string;
@@ -164,6 +165,21 @@ export default function Home() {
               </svg>
               Cards
             </button>
+
+            <button
+              onClick={() => navigate("podcast")}
+              className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-all ${
+                step === "podcast"
+                  ? "border-accent-primary/40 bg-accent-primary/10 text-accent-secondary"
+                  : "border-border-primary bg-bg-card text-text-dim hover:text-text-secondary hover:border-border-hover"
+              }`}
+              title="AI Podcast"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+              </svg>
+              Podcast
+            </button>
           </div>
         </div>
       </header>
@@ -249,6 +265,12 @@ export default function Home() {
                 subject={appState.subject || undefined}
                 onMaterialReady={() => setAppState({ ...appState, hasMaterial: true })}
                 onBack={() => navigate(prevStep === "flashcards" || prevStep === "upload" ? (appState.sessionId ? "dashboard" : "select") : prevStep)}
+              />
+            )}
+
+            {step === "podcast" && (
+              <PodcastPage
+                onBack={() => navigate(prevStep === "podcast" ? (appState.sessionId ? "dashboard" : "select") : prevStep)}
               />
             )}
           </motion.div>

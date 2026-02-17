@@ -95,6 +95,28 @@ class FlashcardResponse(BaseModel):
     subject: str
 
 
+# --- Podcast ---
+class PodcastRequest(BaseModel):
+    topic: str
+
+
+class PodcastScriptEntry(BaseModel):
+    speaker: str
+    name: str
+    text: str
+    emotion: str = "neutral"
+    audio_url: Optional[str] = None
+
+
+class PodcastResponse(BaseModel):
+    podcast_id: str
+    topic: str
+    script: list[dict]
+    full_audio_url: Optional[str] = None
+    has_audio: bool = False
+    segments: int = 0
+
+
 # --- Enhanced progress ---
 class ProgressResponse(BaseModel):
     session_id: str
