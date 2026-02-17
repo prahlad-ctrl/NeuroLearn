@@ -13,6 +13,7 @@ track mastery with an analytics dashboard, and revise with smart flashcards.
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb)](https://www.mongodb.com/atlas)
 [![Gemini](https://img.shields.io/badge/Google-Gemini_2.5_Flash-4285F4?logo=google)](https://ai.google.dev)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?logo=tailwindcss)](https://tailwindcss.com)
+[![Ollama](https://logowik.com/ollama-language-model-logo-vector-71308.html)(https://ollama.com)] 
 
 </div>
 
@@ -354,9 +355,3 @@ Changes to `.env` require a **server restart** — the `IS_GEMINI` flag is cache
 ## 📜 License
 
 This project is built for the hackathon and is available under the [MIT License](LICENSE).
-
----
-
-<div align="center">
-  <strong>Built with ❤️ for learning</strong>
-</div>
