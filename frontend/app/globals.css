@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #06060a;
+  color: #f1f5f9;
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: rgba(124, 58, 237, 0.35);
+  color: #f1f5f9;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e1e2e;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2a2a3e;
+}
+
+@layer base {
+  input, textarea {
+    @apply caret-accent-secondary;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply rounded-xl border border-glass-border bg-glass-bg backdrop-blur-xl shadow-card;
+  }
+
+  .btn-primary {
+    @apply relative overflow-hidden rounded-xl bg-accent-primary px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-accent-muted hover:shadow-glow-sm active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .btn-secondary {
+    @apply rounded-xl border border-border-secondary bg-bg-elevated px-6 py-3 text-sm font-medium text-text-secondary transition-all duration-300 hover:border-border-focus/30 hover:bg-bg-hover hover:text-text-primary;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-accent-secondary via-accent-primary to-accent-cyan bg-clip-text text-transparent;
+  }
+
+  .loading-spinner {
+    @apply h-5 w-5 animate-spin rounded-full border-2 border-accent-primary/30 border-t-accent-secondary;
+  }
+}
